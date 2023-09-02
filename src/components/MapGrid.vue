@@ -1,33 +1,57 @@
 <template>
-    <div style="display: grid; grid-template-columns: repeat(19, 1fr); width: 760px;">
+    <div class="grid">
         <div v-for="row, i in goodGrid" :key="i">
-            <div v-for="col, j in row" :key="j" style="height: 40px;">
-                <img v-if="col == 0" src="@/assets/images/murbrique.jpg" alt="wall" style="width: 40px;">
-                <img v-else-if="col == 2" src="@/assets/images/bonbon.gif" alt="gum" style="width: 40px;">
-                <img v-else src="@/assets/images/sol.gif" alt="ground" style="width: 40px;">
+            <div v-for="col, j in row" :key="j" :style="{ 'height': `${square_size}px` }">
+                <img :src="getImage(col)" alt="img" :style="{ 'width': `${square_size}px` }">
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import constantes from '../../config';
 
 export default {
     name: 'MapGrid',
-    computed: {
-        goodGrid: function() {
-            const numRows = this.$store.state.grid.length;
-            const numCols = this.$store.state.grid[0].length;
-            const transposedGrid = [];
-            for (let col = 0; col < numCols; col++) {
-                const newRow = [];
-                for (let row = 0; row < numRows; row++) {
-                    newRow.push(this.$store.state.grid[row][col]);
-                }
-                transposedGrid.push(newRow);
-            }
-            return transposedGrid;
+    data() {
+        return {
+            square_size: constantes.SQUARE_SIZE,
+            wall: constantes.WALL,
+            gum: constantes.GUM,
+            imagePaths: {
+                wall: './assets/images/murbrique.jpg',
+                gum: './assets/images/bonbon.gif',
+                ground: './assets/images/sol.gif',
+            },
         }
     },
+    computed: {
+        goodGrid() {
+            const grid = this.$store.state.grid;
+            return this.transposeGrid(grid);
+        }
+    },
+    methods: {
+        transposeGrid(grid) {
+            return grid[0].map((_, colIndex) => grid.map((row) => row[colIndex]));
+        },
+        getImage(col) {
+            if (col == constantes.WALL) {
+                return this.imagePaths.wall;
+            } else if (col == constantes.GUM) {
+                return this.imagePaths.gum;
+            } else {
+                return this.imagePaths.ground
+            }
+        }
+    }
 }
 </script>
+
+<style scoped>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(19, 1fr);
+    width: 760px;
+}
+</style>

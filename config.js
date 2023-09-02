@@ -1,0 +1,16 @@
+export default Object.freeze({
+    SQUARE_SIZE: 40,
+    WALL: 0,
+    EMPTY: 1,
+    GUM: 2,
+    PACMAN: 3,
+    GHOST_SPEED: 300,
+    GO_UP: 0,
+    GO_DOWN: 1,
+    GO_RIGHT: 2,
+    GO_LEFT: 3,
+    KEY_UP: 'z',
+    KEY_DOWN: 's',
+    KEY_RIGHT: 'd',
+    KEY_LEFT: 'q',
+})
