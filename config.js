@@ -4,6 +4,7 @@ export default Object.freeze({
     EMPTY: 1,
     GUM: 2,
     PACMAN: 3,
+    PACMAN_SPEED: 300,
     GHOST_SPEED: 300,
     GO_UP: 0,
     GO_DOWN: 1,

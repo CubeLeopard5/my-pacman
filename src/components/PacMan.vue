@@ -31,7 +31,8 @@ export default {
         const { SQUARE_SIZE, PACMAN, KEY_DOWN,
                 KEY_UP, KEY_RIGHT, KEY_LEFT,
                 GO_DOWN, GO_UP, GO_RIGHT,
-                GO_LEFT, WALL, EMPTY }
+                GO_LEFT, WALL, EMPTY,
+                PACMAN_SPEED }
             = constantes;
 		return {
 			topPos: 0,
@@ -50,6 +51,8 @@ export default {
             GO_LEFT,
             WALL,
             EMPTY,
+            PACMAN_SPEED,
+            waitForNextTick: false,
 		}
 	},
     computed: {
@@ -65,26 +68,33 @@ export default {
                 top: `${this.topPos}px`,
                 left: `${this.leftPos}px`,
                 transform: `rotate(${this.img_orientation * 90}deg)`,
+                transition: `all ${this.PACMAN_SPEED}ms ease`,
             };
         },
     },
     methods: {
         handleKeyDown(e) {
-            switch (e.key) {
-                case this.KEY_DOWN:
-                    this.movePacman(this.GO_DOWN, 1);
-                    break;
-                case this.KEY_UP:
-                    this.movePacman(this.GO_UP, 3);
-                    break;
-                case this.KEY_RIGHT:
-                    this.movePacman(this.GO_RIGHT, 0);
-                    break;
-                case this.KEY_LEFT:
-                    this.movePacman(this.GO_LEFT, 2);
-                    break;
-                default:
-                    break;
+            if (this.waitForNextTick == false) {
+                switch (e.key) {
+                    case this.KEY_DOWN:
+                        this.movePacman(this.GO_DOWN, 1);
+                        break;
+                    case this.KEY_UP:
+                        this.movePacman(this.GO_UP, 3);
+                        break;
+                    case this.KEY_RIGHT:
+                        this.movePacman(this.GO_RIGHT, 0);
+                        break;
+                    case this.KEY_LEFT:
+                        this.movePacman(this.GO_LEFT, 2);
+                        break;
+                    default:
+                        break;
+                }
+                this.waitForNextTick = true;
+                setTimeout(() => {
+                    this.waitForNextTick = false;
+                }, this.PACMAN_SPEED);
             }
         },
         getPacmanPosition() {

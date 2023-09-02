@@ -35,7 +35,7 @@ export default {
         const { SQUARE_SIZE, PACMAN, KEY_DOWN,
                 KEY_UP, KEY_RIGHT, KEY_LEFT,
                 GO_DOWN, GO_UP, GO_RIGHT,
-                GO_LEFT, WALL, GHOST_SPEED }
+                GO_LEFT, WALL, GHOST_SPEED, }
             = constantes;
 		return {
             timer: null,
@@ -59,8 +59,10 @@ export default {
     computed: {
         ghostStyle() {
             return {
+                width: `${this.SQUARE_SIZE}px`,
                 top: `${this.topPos}px`,
                 left: `${this.leftPos}px`,
+                transition: `all, ${this.GHOST_SPEED}ms ease`,
             };
         },
     },
@@ -74,19 +76,11 @@ export default {
             this.leftPos = this.posInGrid.x * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
         },
         doesGhostTouchPlayer() {
-            const posInGrid = this.getGhostPositionInGrid();
+            const { x, y } = this.getGhostPositionInGrid();
             const { grid } = this.$store.state;
-            const adjacentPositions = [
-                [posInGrid.x, posInGrid.y],
-                [posInGrid.x + 1, posInGrid.y],
-                [posInGrid.x - 1, posInGrid.y],
-                [posInGrid.x, posInGrid.y + 1],
-                [posInGrid.x, posInGrid.y - 1],
-            ];
-            for (const [x, y] of adjacentPositions) {
-                if (grid[y] && grid[y][x] == this.PACMAN) {
-                    return true;
-                }
+
+            if (grid[y][x] == this.PACMAN) {
+                return true;
             }
             return false;
         },
@@ -139,21 +133,18 @@ export default {
             return (grid[y + 1][x] != this.WALL || grid[y - 1][x] != this.WALL);
         },
         goBackIfDeadEnd(grid, x, y) {
-            if (this.dir == this.GO_DOWN && grid[y + 1][x] == this.WALL) {
+            if (this.dir == this.GO_DOWN && !this.canMoveToDirection(grid, x, y + 1)) {
                 return this.GO_UP;
-            } else if (this.dir == this.GO_UP && grid[y - 1][x] == this.WALL) {
+            } else if (this.dir == this.GO_UP && !this.canMoveToDirection(grid, x, y - 1)) {
                 return this.GO_DOWN;
-            } else if (this.dir == this.GO_RIGHT && grid[y][x + 1] == this.WALL) {
+            } else if (this.dir == this.GO_RIGHT && !this.canMoveToDirection(grid, x + 1, y)) {
                 return this.GO_LEFT;
-            } else if (this.dir == this.GO_LEFT && grid[y][x - 1] == this.WALL) {
+            } else if (this.dir == this.GO_LEFT && !this.canMoveToDirection(grid, x - 1, y)) {
                 return this.GO_RIGHT;
             }
             return this.dir;
         },
-        computePossibleMoves() {
-            const { x, y } = this.getGhostPositionInGrid();
-            const { grid } = this.$store.state;
-
+        computePossibleMoves(grid, x, y) {
             if (this.dir == this.GO_DOWN || this.dir == this.GO_UP) {
                 if (this.isThereFreeSpaceLeftRight(grid, x, y)) {
                     return this.chooseDirection(grid, x, y);
@@ -170,10 +161,13 @@ export default {
             return this.dir;
         },
         canMoveToDirection(grid, x, y) {
-            return (grid[y][x] != this.WALL);
+            return (grid[y][x] != this.WALL && grid[y][x] != this.GHOST);
         },
         moveGhost() {
-            this.dir = this.computePossibleMoves();
+            const { x, y } = this.getGhostPositionInGrid();
+            const { grid } = this.$store.state;
+
+            this.dir = this.computePossibleMoves(grid, x, y);
             if (this.dir == this.GO_UP) {
                 this.topPos += this.SQUARE_SIZE;
             } else if (this.dir == this.GO_DOWN) {
@@ -198,6 +192,5 @@ export default {
     z-index: 1;
     top: 0px;
     left: 0px;
-	width: 40px;
 }
 </style>
