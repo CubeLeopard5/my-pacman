@@ -16,23 +16,40 @@ export default {
         }
     },
     created() {
-        this.topPos = this.posInGrid.y * constantes.SQUARE_SIZE + constantes.SQUARE_SIZE / 4;
-        this.leftPos = this.posInGrid.x * constantes.SQUARE_SIZE + constantes.SQUARE_SIZE / 4;
+        this.topPos = this.posInGrid.y * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
+        this.leftPos = this.posInGrid.x * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
         window.addEventListener('keydown', this.handleKeyDown);
     },
     mounted() {
         const posInGrid = this.getPacmanPosition();
-        this.$store.state.grid[posInGrid.y][posInGrid.x] = constantes.PACMAN;
+        this.$store.state.grid[posInGrid.y][posInGrid.x] = this.PACMAN;
     },
     beforeUnmount() {
         window.removeEventListener('keydown', this.handleKeyDown);
     },
 	data() {
+        const { SQUARE_SIZE, PACMAN, KEY_DOWN,
+                KEY_UP, KEY_RIGHT, KEY_LEFT,
+                GO_DOWN, GO_UP, GO_RIGHT,
+                GO_LEFT, WALL, EMPTY }
+            = constantes;
 		return {
 			topPos: 0,
 			leftPos: 0,
-            pacman_width: constantes.SQUARE_SIZE,
+            pacman_width: SQUARE_SIZE,
             img_orientation: 0,
+            SQUARE_SIZE,
+            PACMAN,
+            KEY_DOWN,
+            KEY_UP,
+            KEY_RIGHT,
+            KEY_LEFT,
+            GO_DOWN,
+            GO_UP,
+            GO_RIGHT,
+            GO_LEFT,
+            WALL,
+            EMPTY,
 		}
 	},
     computed: {
@@ -54,17 +71,17 @@ export default {
     methods: {
         handleKeyDown(e) {
             switch (e.key) {
-                case constantes.KEY_DOWN:
-                    this.movePacman(constantes.GO_DOWN, 1);
+                case this.KEY_DOWN:
+                    this.movePacman(this.GO_DOWN, 1);
                     break;
-                case constantes.KEY_UP:
-                    this.movePacman(constantes.GO_UP, 3);
+                case this.KEY_UP:
+                    this.movePacman(this.GO_UP, 3);
                     break;
-                case constantes.KEY_RIGHT:
-                    this.movePacman(constantes.GO_RIGHT, 0);
+                case this.KEY_RIGHT:
+                    this.movePacman(this.GO_RIGHT, 0);
                     break;
-                case constantes.KEY_LEFT:
-                    this.movePacman(constantes.GO_LEFT, 2);
+                case this.KEY_LEFT:
+                    this.movePacman(this.GO_LEFT, 2);
                     break;
                 default:
                     break;
@@ -75,37 +92,40 @@ export default {
             const centerX = (pacman.left + pacman.right) / 2;
             const centerY = (pacman.top + pacman.bottom) / 2;
             const posInGrid = {
-                x: Math.floor(centerX / constantes.SQUARE_SIZE),
-                y: Math.floor(centerY / constantes.SQUARE_SIZE),
+                x: Math.floor(centerX / this.SQUARE_SIZE),
+                y: Math.floor(centerY / this.SQUARE_SIZE),
             };
             return posInGrid;
         },
         teleportPacman() {
-            if (this.leftPos < 0) {
-                this.leftPos = this.$store.state.grid.length * constantes.SQUARE_SIZE  - (constantes.SQUARE_SIZE * 3 - constantes.SQUARE_SIZE / 4);
-            } else if (this.leftPos > this.$store.state.grid.length * constantes.SQUARE_SIZE - (constantes.SQUARE_SIZE * 3 - constantes.SQUARE_SIZE / 4)) {
-                this.leftPos = constantes.SQUARE_SIZE / 4;
+            const rightPlace = this.$store.state.grid.length * this.SQUARE_SIZE - (this.SQUARE_SIZE * 3 - this.SQUARE_SIZE / 4);
+            const leftPlace = this.SQUARE_SIZE / 4;
+
+            if (this.leftPos < leftPlace) {
+                this.leftPos = rightPlace;
+            } else if (this.leftPos > rightPlace) {
+                this.leftPos = leftPlace;
             }
         },
         movePacman(direction, orientation) {
             const { x, y } = this.getPacmanPosition();
             const { grid } = this.$store.state;
 
-            if (direction === constantes.GO_DOWN && grid[y + 1][x] !== constantes.WALL) {
-                this.topPos += constantes.SQUARE_SIZE;
-                grid[y + 1][x] = constantes.PACMAN;
-            } else if (direction === constantes.GO_UP && grid[y - 1][x] !== constantes.WALL) {
-                this.topPos -= constantes.SQUARE_SIZE;
-                grid[y - 1][x] = constantes.PACMAN;
-            } else if (direction === constantes.GO_RIGHT && grid[y][x + 1] !== constantes.WALL) {
-                this.leftPos += constantes.SQUARE_SIZE;
-                grid[y][x + 1] = constantes.PACMAN;
-            } else if (direction === constantes.GO_LEFT && grid[y][x - 1] !== constantes.WALL) {
-                this.leftPos -= constantes.SQUARE_SIZE;
-                grid[y][x - 1] = constantes.PACMAN;
+            if (direction === this.GO_DOWN && grid[y + 1][x] !== this.WALL) {
+                this.topPos += this.SQUARE_SIZE;
+                grid[y + 1][x] = this.PACMAN;
+            } else if (direction === this.GO_UP && grid[y - 1][x] !== this.WALL) {
+                this.topPos -= this.SQUARE_SIZE;
+                grid[y - 1][x] = this.PACMAN;
+            } else if (direction === this.GO_RIGHT && grid[y][x + 1] !== this.WALL) {
+                this.leftPos += this.SQUARE_SIZE;
+                grid[y][x + 1] = this.PACMAN;
+            } else if (direction === this.GO_LEFT && grid[y][x - 1] !== this.WALL) {
+                this.leftPos -= this.SQUARE_SIZE;
+                grid[y][x - 1] = this.PACMAN;
             }
 
-            grid[y][x] = constantes.EMPTY;
+            grid[y][x] = this.EMPTY;
             this.img_orientation = orientation;
             this.teleportPacman();
         },

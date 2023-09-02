@@ -11,7 +11,7 @@ export default {
     name: "GhostEnnemy",
     mounted: function () {
         this.initGhost();
-        this.timer = setInterval(this.moveGhost, constantes.GHOST_SPEED);
+        this.timer = setInterval(this.moveGhost, this.GHOST_SPEED);
     },
     beforeUnmount() {
         clearInterval(this.timer)
@@ -32,11 +32,28 @@ export default {
         },
     },
 	data() {
+        const { SQUARE_SIZE, PACMAN, KEY_DOWN,
+                KEY_UP, KEY_RIGHT, KEY_LEFT,
+                GO_DOWN, GO_UP, GO_RIGHT,
+                GO_LEFT, WALL, GHOST_SPEED }
+            = constantes;
 		return {
             timer: null,
 			topPos: 0,
 			leftPos: 0,
             dir: 0,
+            SQUARE_SIZE,
+            PACMAN,
+            KEY_DOWN,
+            KEY_UP,
+            KEY_RIGHT,
+            KEY_LEFT,
+            GO_DOWN,
+            GO_UP,
+            GO_RIGHT,
+            GO_LEFT,
+            WALL,
+            GHOST_SPEED,
 		}
 	},
     computed: {
@@ -53,12 +70,12 @@ export default {
             this.setGhostPosition();
         },
         setGhostPosition() {
-            this.topPos = this.posInGrid.y * constantes.SQUARE_SIZE + constantes.SQUARE_SIZE / 4;
-            this.leftPos = this.posInGrid.x * constantes.SQUARE_SIZE + constantes.SQUARE_SIZE / 4;
+            this.topPos = this.posInGrid.y * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
+            this.leftPos = this.posInGrid.x * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
         },
         doesGhostTouchPlayer() {
             const posInGrid = this.getGhostPositionInGrid();
-            const grid = this.$store.state.grid;
+            const { grid } = this.$store.state;
             const adjacentPositions = [
                 [posInGrid.x, posInGrid.y],
                 [posInGrid.x + 1, posInGrid.y],
@@ -67,7 +84,7 @@ export default {
                 [posInGrid.x, posInGrid.y - 1],
             ];
             for (const [x, y] of adjacentPositions) {
-                if (grid[y] && grid[y][x] === constantes.PACMAN) {
+                if (grid[y] && grid[y][x] == this.PACMAN) {
                     return true;
                 }
             }
@@ -83,50 +100,53 @@ export default {
             const centerX = (ghost.left + ghost.right) / 2;
             const centerY = (ghost.top + ghost.bottom) / 2;
             const posInGrid = {
-                x: Math.floor(centerX / constantes.SQUARE_SIZE),
-                y: Math.floor(centerY / constantes.SQUARE_SIZE),
+                x: Math.floor(centerX / this.SQUARE_SIZE),
+                y: Math.floor(centerY / this.SQUARE_SIZE),
             };
             return posInGrid;
         },
         teleportGhost() {
-            if (this.leftPos < 0) {
-                this.leftPos = this.$store.state.grid.length * constantes.SQUARE_SIZE  - (constantes.SQUARE_SIZE * 3 - constantes.SQUARE_SIZE / 4);
-            } else if (this.leftPos > this.$store.state.grid.length * constantes.SQUARE_SIZE - (constantes.SQUARE_SIZE * 3 - constantes.SQUARE_SIZE / 4)) {
-                this.leftPos = constantes.SQUARE_SIZE / 4;
+            const rightPlace = this.$store.state.grid.length * this.SQUARE_SIZE - (this.SQUARE_SIZE * 3 - this.SQUARE_SIZE / 4);
+            const leftPlace = this.SQUARE_SIZE / 4;
+
+            if (this.leftPos < leftPlace) {
+                this.leftPos = rightPlace;
+            } else if (this.leftPos > rightPlace) {
+                this.leftPos = leftPlace;
             }
         },
         chooseDirection(grid, x, y) {
             let possibleMoves = [];
 
             if (this.canMoveToDirection(grid, x + 1, y)) {
-                possibleMoves.push(constantes.GO_RIGHT);
+                possibleMoves.push(this.GO_RIGHT);
             }
             if (this.canMoveToDirection(grid, x - 1, y)) {
-                possibleMoves.push(constantes.GO_LEFT);
+                possibleMoves.push(this.GO_LEFT);
             }
             if (this.canMoveToDirection(grid, x, y + 1)) {
-                possibleMoves.push(constantes.GO_UP);
+                possibleMoves.push(this.GO_UP);
             }
             if (this.canMoveToDirection(grid, x, y - 1)) {
-                possibleMoves.push(constantes.GO_DOWN);
+                possibleMoves.push(this.GO_DOWN);
             }
             return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
         },
         isThereFreeSpaceLeftRight(grid, x, y) {
-            return (grid[y][x + 1] != constantes.WALL || grid[y][x - 1] != constantes.WALL);
+            return (grid[y][x + 1] != this.WALL || grid[y][x - 1] != this.WALL);
         },
         isThereFreeSpaceUpDown(grid, x, y) {
-            return (grid[y + 1][x] != constantes.WALL || grid[y - 1][x] != constantes.WALL);
+            return (grid[y + 1][x] != this.WALL || grid[y - 1][x] != this.WALL);
         },
         goBackIfDeadEnd(grid, x, y) {
-            if (this.dir == constantes.GO_DOWN && grid[y + 1][x] == constantes.WALL) {
-                return constantes.GO_UP;
-            } else if (this.dir == constantes.GO_UP && grid[y - 1][x] == constantes.WALL) {
-                return constantes.GO_DOWN;
-            } else if (this.dir == constantes.GO_RIGHT && grid[y][x + 1] == constantes.WALL) {
-                return constantes.GO_LEFT;
-            } else if (this.dir == constantes.GO_LEFT && grid[y][x - 1] == constantes.WALL) {
-                return constantes.GO_RIGHT;
+            if (this.dir == this.GO_DOWN && grid[y + 1][x] == this.WALL) {
+                return this.GO_UP;
+            } else if (this.dir == this.GO_UP && grid[y - 1][x] == this.WALL) {
+                return this.GO_DOWN;
+            } else if (this.dir == this.GO_RIGHT && grid[y][x + 1] == this.WALL) {
+                return this.GO_LEFT;
+            } else if (this.dir == this.GO_LEFT && grid[y][x - 1] == this.WALL) {
+                return this.GO_RIGHT;
             }
             return this.dir;
         },
@@ -134,13 +154,13 @@ export default {
             const { x, y } = this.getGhostPositionInGrid();
             const { grid } = this.$store.state;
 
-            if (this.dir == constantes.GO_DOWN || this.dir == constantes.GO_UP) {
+            if (this.dir == this.GO_DOWN || this.dir == this.GO_UP) {
                 if (this.isThereFreeSpaceLeftRight(grid, x, y)) {
                     return this.chooseDirection(grid, x, y);
                 } else {
                     return this.goBackIfDeadEnd(grid, x, y);
                 }
-            } else if (this.dir == constantes.GO_RIGHT || this.dir == constantes.GO_LEFT) {
+            } else if (this.dir == this.GO_RIGHT || this.dir == this.GO_LEFT) {
                 if (this.isThereFreeSpaceUpDown(grid, x, y)) {
                     return this.chooseDirection(grid, x, y);
                 } else {
@@ -150,18 +170,18 @@ export default {
             return this.dir;
         },
         canMoveToDirection(grid, x, y) {
-            return (grid[y][x] != constantes.WALL);
+            return (grid[y][x] != this.WALL);
         },
         moveGhost() {
             this.dir = this.computePossibleMoves();
-            if (this.dir == constantes.GO_UP) {
-                this.topPos += constantes.SQUARE_SIZE;
-            } else if (this.dir == constantes.GO_DOWN) {
-                this.topPos -= constantes.SQUARE_SIZE;
-            } else if (this.dir == constantes.GO_RIGHT) {
-                this.leftPos += constantes.SQUARE_SIZE;
-            } else if (this.dir == constantes.GO_LEFT) {
-                this.leftPos -= constantes.SQUARE_SIZE;
+            if (this.dir == this.GO_UP) {
+                this.topPos += this.SQUARE_SIZE;
+            } else if (this.dir == this.GO_DOWN) {
+                this.topPos -= this.SQUARE_SIZE;
+            } else if (this.dir == this.GO_RIGHT) {
+                this.leftPos += this.SQUARE_SIZE;
+            } else if (this.dir == this.GO_LEFT) {
+                this.leftPos -= this.SQUARE_SIZE;
             }
             this.teleportGhost();
             if (this.doesGhostTouchPlayer() == true) {

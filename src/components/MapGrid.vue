@@ -1,8 +1,8 @@
 <template>
     <div class="grid">
-        <div v-for="row, i in goodGrid" :key="i">
-            <div v-for="col, j in row" :key="j" :style="{ 'height': `${square_size}px` }">
-                <img :src="getImage(col)" alt="img" :style="{ 'width': `${square_size}px` }">
+        <div v-for="row, i in transposedGrid" :key="i">
+            <div v-for="col, j in row" :key="j" :style="getHeight">
+                <img :src="getImage(col)" alt="img" :style="getWidth">
             </div>
         </div>
     </div>
@@ -14,10 +14,11 @@ import constantes from '../../config';
 export default {
     name: 'MapGrid',
     data() {
+        const { SQUARE_SIZE, WALL, GUM } = constantes;
         return {
-            square_size: constantes.SQUARE_SIZE,
-            wall: constantes.WALL,
-            gum: constantes.GUM,
+            SQUARE_SIZE,
+            WALL,
+            GUM,
             imagePaths: {
                 wall: './assets/images/murbrique.jpg',
                 gum: './assets/images/bonbon.gif',
@@ -26,19 +27,30 @@ export default {
         }
     },
     computed: {
-        goodGrid() {
-            const grid = this.$store.state.grid;
+        transposedGrid() {
+            const { grid } = this.$store.state;
             return this.transposeGrid(grid);
-        }
+        },
+        getWidth() {
+            return {
+                width: `${this.SQUARE_SIZE}px`,
+            };
+        },
+        getHeight() {
+            return {
+                height: `${this.SQUARE_SIZE}px`,
+            }
+        },
     },
     methods: {
         transposeGrid(grid) {
+            // Because reading grid column by column won't print the map in the correct direction.
             return grid[0].map((_, colIndex) => grid.map((row) => row[colIndex]));
         },
         getImage(col) {
-            if (col == constantes.WALL) {
+            if (col == this.WALL) {
                 return this.imagePaths.wall;
-            } else if (col == constantes.GUM) {
+            } else if (col == this.GUM) {
                 return this.imagePaths.gum;
             } else {
                 return this.imagePaths.ground
