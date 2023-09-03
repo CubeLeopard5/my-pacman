@@ -18,7 +18,7 @@ export default {
     },
     updated() {
         if (this.doesGhostTouchPlayer() == true) {
-            console.log("TOUCHED");
+            alert("You lost!");
         }
     },
     props: {
@@ -42,6 +42,7 @@ export default {
 			topPos: 0,
 			leftPos: 0,
             dir: 0,
+            orientation: 1,
             SQUARE_SIZE,
             PACMAN,
             KEY_DOWN,
@@ -62,7 +63,8 @@ export default {
                 width: `${this.SQUARE_SIZE}px`,
                 top: `${this.topPos}px`,
                 left: `${this.leftPos}px`,
-                transition: `all, ${this.GHOST_SPEED}ms ease`,
+                transition: `all ${this.GHOST_SPEED}ms linear`,
+                transform: `scaleX(${this.orientation})`,
             };
         },
     },
@@ -112,16 +114,16 @@ export default {
         chooseDirection(grid, x, y) {
             let possibleMoves = [];
 
-            if (this.canMoveToDirection(grid, x + 1, y)) {
+            if (this.dir != this.GO_LEFT && this.canMoveToDirection(grid, x + 1, y)) {
                 possibleMoves.push(this.GO_RIGHT);
             }
-            if (this.canMoveToDirection(grid, x - 1, y)) {
+            if (this.dir != this.GO_RIGHT && this.canMoveToDirection(grid, x - 1, y)) {
                 possibleMoves.push(this.GO_LEFT);
             }
-            if (this.canMoveToDirection(grid, x, y + 1)) {
+            if (this.dir != this.GO_DOWN && this.canMoveToDirection(grid, x, y + 1)) {
                 possibleMoves.push(this.GO_UP);
             }
-            if (this.canMoveToDirection(grid, x, y - 1)) {
+            if (this.dir != this.GO_UP && this.canMoveToDirection(grid, x, y - 1)) {
                 possibleMoves.push(this.GO_DOWN);
             }
             return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
@@ -174,13 +176,12 @@ export default {
                 this.topPos -= this.SQUARE_SIZE;
             } else if (this.dir == this.GO_RIGHT) {
                 this.leftPos += this.SQUARE_SIZE;
+                this.orientation = 1;
             } else if (this.dir == this.GO_LEFT) {
                 this.leftPos -= this.SQUARE_SIZE;
+                this.orientation = -1;
             }
             this.teleportGhost();
-            if (this.doesGhostTouchPlayer() == true) {
-                console.log("TOUCHED");
-            }
         }
     }
 }

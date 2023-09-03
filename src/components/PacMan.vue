@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img src="@/assets/images/pacman4.gif" alt="pacman" class="pacman" ref="pacman" :style="pacmanStyle"/>
+        <img src="../../public/assets/images/pacman4.gif" alt="pacman" class="pacman" ref="pacman" :style="pacmanStyle"/>
     </div>
 </template>
 
@@ -68,7 +68,7 @@ export default {
                 top: `${this.topPos}px`,
                 left: `${this.leftPos}px`,
                 transform: `rotate(${this.img_orientation * 90}deg)`,
-                transition: `all ${this.PACMAN_SPEED}ms ease`,
+                transition: `all ${this.PACMAN_SPEED}ms linear`,
             };
         },
     },
@@ -137,6 +137,7 @@ export default {
 
             grid[y][x] = this.EMPTY;
             this.img_orientation = orientation;
+            this.$emit('orientationChange', this.img_orientation);
             this.teleportPacman();
         },
     }

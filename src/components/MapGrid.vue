@@ -64,6 +64,5 @@ export default {
 .grid {
     display: grid;
     grid-template-columns: repeat(19, 1fr);
-    width: 760px;
 }
 </style>
