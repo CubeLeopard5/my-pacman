@@ -18,6 +18,9 @@
 				<span> Gums left: {{ getGumLeft() }} </span>
 				<span> Pacman direction: {{ pacmanOrientation }} </span>
 			</div>
+			<button @click="$store.state.grid = generateRandomMaze(21, 19)">
+				Generate random map
+			</button>
 		</div>
 	</div>
 </template>
@@ -36,9 +39,10 @@ export default {
 		GhostEnnemy,
 	},
 	data() {
-        const { GUM, SQUARE_SIZE } = constantes;
+        const { GUM, WALL, SQUARE_SIZE } = constantes;
         return {
             GUM,
+			WALL,
 			SQUARE_SIZE,
 			nbGhost: 4,
 			ghosts: [
@@ -111,6 +115,56 @@ export default {
 			}
             return count;
         },
+		getRandomIntInclusive(min, max) {
+			min = Math.ceil(min);
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		},
+		createSpace(randomGrid, i, j) {
+			if (randomGrid[i][j] == this.GUM) {
+				if (this.getRandomIntInclusive(0, 1) == 0) {
+					randomGrid[i][j + 1] = this.GUM;
+				} else {
+					randomGrid[i + 1][j] = this.GUM;
+				}
+			} else {
+				randomGrid[i][j + 1] = this.GUM;
+			}
+			return randomGrid;
+		},
+		addWallsSurrounding(randomGrid) {
+			for (let i = 0; i < randomGrid.length - 1; i++) {
+				randomGrid[i][randomGrid[0].length - 1] = this.WALL;
+			}
+			for (let i = 0; i < randomGrid[0].length; i++) {
+				randomGrid[randomGrid.length - 1][i] = this.WALL;
+			}
+			return randomGrid;
+		},
+		addTeleportingSpace(randomGrid) {
+			const teleport = this.getRandomIntInclusive(1, randomGrid.length - 2);
+
+			for (let i = 0; randomGrid[teleport][i] == this.WALL; i++) {
+				randomGrid[teleport][i] = 2;
+			}
+			for (let i = randomGrid[0].length - 1; randomGrid[teleport][i] == this.WALL; i--) {
+				randomGrid[teleport][i] = 2;
+			}
+			return randomGrid;
+		},
+		generateRandomMaze(nbRows, nbColumns) {
+			let randomGrid = Array.from(Array(nbRows), () => Array(nbColumns).fill(this.WALL));
+
+			randomGrid[1][1] = this.GUM;
+			for (let i = 1; i < randomGrid.length - 1; i++) {
+				for (let j = 1; j < randomGrid[i].length - 1; j++) {
+					randomGrid = this.createSpace(randomGrid, i, j);
+				}
+			}
+			randomGrid = this.addWallsSurrounding(randomGrid);
+			randomGrid = this.addTeleportingSpace(randomGrid);
+			return randomGrid;
+		},
 	}
 }
 </script>

@@ -120,11 +120,11 @@ export default {
             if (this.dir != this.GO_RIGHT && this.canMoveToDirection(grid, x - 1, y)) {
                 possibleMoves.push(this.GO_LEFT);
             }
-            if (this.dir != this.GO_DOWN && this.canMoveToDirection(grid, x, y + 1)) {
-                possibleMoves.push(this.GO_UP);
-            }
-            if (this.dir != this.GO_UP && this.canMoveToDirection(grid, x, y - 1)) {
+            if (this.dir != this.GO_UP && this.canMoveToDirection(grid, x, y + 1)) {
                 possibleMoves.push(this.GO_DOWN);
+            }
+            if (this.dir != this.GO_DOWN && this.canMoveToDirection(grid, x, y - 1)) {
+                possibleMoves.push(this.GO_UP);
             }
             return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
         },
@@ -170,9 +170,9 @@ export default {
             const { grid } = this.$store.state;
 
             this.dir = this.computePossibleMoves(grid, x, y);
-            if (this.dir == this.GO_UP) {
+            if (this.dir == this.GO_DOWN) {
                 this.topPos += this.SQUARE_SIZE;
-            } else if (this.dir == this.GO_DOWN) {
+            } else if (this.dir == this.GO_UP) {
                 this.topPos -= this.SQUARE_SIZE;
             } else if (this.dir == this.GO_RIGHT) {
                 this.leftPos += this.SQUARE_SIZE;

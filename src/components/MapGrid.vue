@@ -55,7 +55,7 @@ export default {
             } else {
                 return this.imagePaths.ground
             }
-        }
+        },
     }
 }
 </script>
