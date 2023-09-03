@@ -74,8 +74,8 @@ export default {
             this.setGhostPosition();
         },
         setGhostPosition() {
-            this.topPos = this.posInGrid.y * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
-            this.leftPos = this.posInGrid.x * this.SQUARE_SIZE + this.SQUARE_SIZE / 4;
+            this.topPos = this.posInGrid.y * this.SQUARE_SIZE;
+            this.leftPos = this.posInGrid.x * this.SQUARE_SIZE;
         },
         doesGhostTouchPlayer() {
             const { x, y } = this.getGhostPositionInGrid();
@@ -102,8 +102,8 @@ export default {
             return posInGrid;
         },
         teleportGhost() {
-            const rightPlace = this.$store.state.grid.length * this.SQUARE_SIZE - (this.SQUARE_SIZE * 3 - this.SQUARE_SIZE / 4);
-            const leftPlace = this.SQUARE_SIZE / 4;
+            const rightPlace = this.$store.state.grid.length * this.SQUARE_SIZE - (this.SQUARE_SIZE * 3);
+            const leftPlace = 0;
 
             if (this.leftPos < leftPlace) {
                 this.leftPos = rightPlace;
