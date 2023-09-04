@@ -18,7 +18,7 @@ export default {
     },
     updated() {
         if (this.doesGhostTouchPlayer() == true) {
-            alert("You lost!");
+            this.$router.push({ name: 'Lost' });
         }
     },
     props: {

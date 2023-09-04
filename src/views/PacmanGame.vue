@@ -18,9 +18,6 @@
 				<span> Gums left: {{ getGumLeft() }} </span>
 				<span> Pacman direction: {{ pacmanOrientation }} </span>
 			</div>
-			<button @click="$store.state.grid = generateRandomMaze(21, 19)">
-				Generate random map
-			</button>
 		</div>
 	</div>
 </template>
@@ -37,6 +34,14 @@ export default {
 		MapGrid,
 		PacMan,
 		GhostEnnemy,
+	},
+	mounted() {
+		if (window.history.state.random == true) {
+			this.$store.state.grid = this.generateRandomMaze(21, 19);
+		} else {
+			this.$store.state.grid = this.$store.state.defaultGrid;
+		}
+		this.nbGhost = window.history.state.nbGhost;
 	},
 	data() {
         const { GUM, WALL, SQUARE_SIZE } = constantes;
@@ -111,7 +116,7 @@ export default {
                 }
             }
 			if (count == 0) {
-				alert("You won!");
+				this.$router.push({ name: 'Won' });
 			}
             return count;
         },
