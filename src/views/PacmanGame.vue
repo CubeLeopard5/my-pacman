@@ -39,7 +39,9 @@ export default {
 		if (window.history.state.random == true) {
 			this.$store.state.grid = this.generateRandomMaze(21, 19);
 		} else {
-			this.$store.state.grid = this.$store.state.defaultGrid;
+			this.$store.state.grid = this.$store.state.defaultGrid.map(function(arr) {
+				return arr.slice();
+			});
 		}
 		this.nbGhost = window.history.state.nbGhost;
 	},
@@ -116,7 +118,7 @@ export default {
                 }
             }
 			if (count == 0) {
-				this.$router.push({ name: 'Won' });
+				this.$router.push({ name: 'EndMenu', state: { msg: 'Congratulation, you won' } });
 			}
             return count;
         },

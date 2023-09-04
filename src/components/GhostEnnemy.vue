@@ -18,7 +18,7 @@ export default {
     },
     updated() {
         if (this.doesGhostTouchPlayer() == true) {
-            this.$router.push({ name: 'Lost' });
+            this.$router.push({ name: 'EndMenu', state: { msg: 'Game over' } });
         }
     },
     props: {

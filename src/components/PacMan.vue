@@ -21,8 +21,12 @@ export default {
         window.addEventListener('keydown', this.handleKeyDown);
     },
     mounted() {
-        const posInGrid = this.getPacmanPosition();
-        this.$store.state.grid[posInGrid.y][posInGrid.x] = this.PACMAN;
+        const { x, y } = this.getPacmanPosition();
+        if (this.$store.state.grid[y][x] == this.GUM) {
+            this.$store.state.grid[y][x] = this.EMPTY;
+            this.$store.state.gameScore++;
+        }
+        this.$store.state.grid[y][x] = this.PACMAN;
     },
     beforeUnmount() {
         window.removeEventListener('keydown', this.handleKeyDown);
@@ -32,7 +36,7 @@ export default {
                 KEY_UP, KEY_RIGHT, KEY_LEFT,
                 GO_DOWN, GO_UP, GO_RIGHT,
                 GO_LEFT, WALL, EMPTY,
-                PACMAN_SPEED }
+                PACMAN_SPEED, GUM }
             = constantes;
 		return {
 			topPos: 0,
@@ -52,6 +56,7 @@ export default {
             WALL,
             EMPTY,
             PACMAN_SPEED,
+            GUM,
             waitForNextTick: false,
 		}
 	},
@@ -121,20 +126,31 @@ export default {
             const { x, y } = this.getPacmanPosition();
             const { grid } = this.$store.state;
 
-            if (direction === this.GO_DOWN && grid[y + 1][x] !== this.WALL) {
+            if (direction == this.GO_DOWN && grid[y + 1][x] != this.WALL) {
                 this.topPos += this.SQUARE_SIZE;
+                if (grid[y + 1][x] == this.GUM) {
+                    this.$store.state.gameScore++;
+                }
                 grid[y + 1][x] = this.PACMAN;
-            } else if (direction === this.GO_UP && grid[y - 1][x] !== this.WALL) {
+            } else if (direction == this.GO_UP && grid[y - 1][x] != this.WALL) {
                 this.topPos -= this.SQUARE_SIZE;
+                if (grid[y - 1][x] == this.GUM) {
+                    this.$store.state.gameScore++;
+                }
                 grid[y - 1][x] = this.PACMAN;
-            } else if (direction === this.GO_RIGHT && grid[y][x + 1] !== this.WALL) {
+            } else if (direction == this.GO_RIGHT && grid[y][x + 1] != this.WALL) {
                 this.leftPos += this.SQUARE_SIZE;
+                if (grid[y][x + 1] == this.GUM) {
+                    this.$store.state.gameScore++;
+                }
                 grid[y][x + 1] = this.PACMAN;
-            } else if (direction === this.GO_LEFT && grid[y][x - 1] !== this.WALL) {
+            } else if (direction == this.GO_LEFT && grid[y][x - 1] != this.WALL) {
                 this.leftPos -= this.SQUARE_SIZE;
+                if (grid[y][x - 1] == this.GUM) {
+                    this.$store.state.gameScore++;
+                }
                 grid[y][x - 1] = this.PACMAN;
             }
-
             grid[y][x] = this.EMPTY;
             this.img_orientation = orientation;
             this.$emit('orientationChange', this.img_orientation);

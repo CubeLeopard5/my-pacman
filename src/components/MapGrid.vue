@@ -28,8 +28,7 @@ export default {
     },
     computed: {
         transposedGrid() {
-            const { grid } = this.$store.state;
-            return this.transposeGrid(grid);
+            return this.transposeGrid(this.$store.state.grid);
         },
         getWidth() {
             return {
@@ -56,7 +55,7 @@ export default {
                 return this.imagePaths.ground
             }
         },
-    }
+    },
 }
 </script>
 

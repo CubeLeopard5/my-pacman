@@ -1,8 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import GameMenu from '../views/GameMenu.vue';
 import PacmanGame from '../views/PacmanGame.vue';
-import LostGame from '../views/LostGame.vue';
-import WonGame from '../views/WonGame.vue';
+import EndMenu from '../views/EndMenu.vue';
 
 const routes = [
 	{
@@ -16,14 +15,9 @@ const routes = [
 		component: PacmanGame
 	},
 	{
-		path: '/lost',
-		name: 'Lost',
-		component: LostGame
-	},
-	{
-		path: '/won',
-		name: 'Won',
-		component: WonGame
+		path: '/end',
+		name: 'EndMenu',
+		component: EndMenu
 	},
 ];
 const router = createRouter({

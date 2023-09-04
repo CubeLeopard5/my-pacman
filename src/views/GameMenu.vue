@@ -1,9 +1,7 @@
 <template>
     <div class="background">
-        <div style="display: flex;
-    flex-direction: column;
-    gap: 24px;">
-            <span style="background: yellow; padding: 12px; border-radius: 8px;"> Select the number of ghosts (0 - 4) and launch game: </span>
+        <div class="game-menu">
+            <span class="game-msg"> Select the number of ghosts (0 - 4) and launch game: </span>
             <input type="number" id="nbGhost" name="nbGhost" min="0" max="4" v-model="nbGhost" style="height: 32px;"/>
             <button @click="goTo('PacmanGame', false)" class="game-button"> Launch game with default map </button>
             <button @click="goTo('PacmanGame', true)" class="game-button"> Launch game with random map </button>
@@ -30,7 +28,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .background {
     background-image: url('../../public/assets/images/game_menu.jpg');
     background-repeat: no-repeat;
@@ -42,6 +40,12 @@ export default {
     justify-content: center;
 }
 
+.game-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 .game-button {
     height: 45px;
     background: yellow;
@@ -50,5 +54,11 @@ export default {
 
 .game-button:hover {
     background: #FFBF00;
+}
+
+.game-msg {
+    background: yellow;
+    padding: 12px;
+    border-radius: 8px;
 }
 </style>
