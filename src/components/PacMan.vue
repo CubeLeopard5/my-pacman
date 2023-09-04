@@ -9,24 +9,18 @@ import constantes from '../../config';
 
 export default {
     name: 'PacMan',
-    props: {
-        posInGrid: {
-            type: Object,
-            required: true,
-        }
-    },
     created() {
-        this.topPos = this.posInGrid.y * this.SQUARE_SIZE;
-        this.leftPos = this.posInGrid.x * this.SQUARE_SIZE;
+        this.topPos = this.SQUARE_SIZE;
+        this.leftPos = this.SQUARE_SIZE;
         window.addEventListener('keydown', this.handleKeyDown);
     },
     mounted() {
-        const { x, y } = this.getPacmanPosition();
+        /*const { x, y } = this.getPacmanPosition();
         if (this.$store.state.grid[y][x] == this.GUM) {
             this.$store.state.grid[y][x] = this.EMPTY;
             this.$store.state.gameScore++;
         }
-        this.$store.state.grid[y][x] = this.PACMAN;
+        this.$store.state.grid[y][x] = this.PACMAN;*/
     },
     beforeUnmount() {
         window.removeEventListener('keydown', this.handleKeyDown);

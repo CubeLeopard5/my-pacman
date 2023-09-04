@@ -1,22 +1,24 @@
 <template>
-    <div :style="{ 'width': `${SQUARE_SIZE * 19}px` }">
-		<MapGrid/>
-		<PacMan :posInGrid="{x: 1, y: 1}" @orientationChange="chnageOrientation"/>
-		<div v-for="i in nbGhost" :key="i">
-			<GhostEnnemy :posInGrid="{x: ghosts[i - 1].x, y: ghosts[i - 1].y}" :img="ghosts[i - 1].img"/>
-		</div>
-		<div class="ui-box">
-			<div class="row-box">
-				<button @click="add" style="height: 32px;">
-					<span> Add a ghost </span>
-				</button>
-				<button @click="sub" style="height: 32px;">
-					<span> Remove a ghost </span>
-				</button>
+	<div class="game-background">
+		<div class="container">
+			<MapGrid/>
+			<PacMan @orientationChange="chnageOrientation"/>
+			<div v-for="i in nbGhost" :key="i">
+				<GhostEnnemy :posInGrid="{x: ghosts[i - 1].x, y: ghosts[i - 1].y}" :img="ghosts[i - 1].img"/>
 			</div>
-			<div class="row-box">
-				<span> Gums left: {{ getGumLeft() }} </span>
-				<span> Pacman direction: {{ pacmanOrientation }} </span>
+			<div class="ui-box">
+				<div class="row-box">
+					<button @click="add" style="height: 32px;">
+						<span> Add a ghost </span>
+					</button>
+					<button @click="sub" style="height: 32px;">
+						<span> Remove a ghost </span>
+					</button>
+				</div>
+				<div class="row-box">
+					<span> Gums left: {{ getGumLeft() }} </span>
+					<span> Pacman direction: {{ pacmanOrientation }} </span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -46,11 +48,12 @@ export default {
 		this.nbGhost = window.history.state.nbGhost;
 	},
 	data() {
-        const { GUM, WALL, SQUARE_SIZE } = constantes;
+        const { GUM, WALL, SQUARE_SIZE, PACMAN } = constantes;
         return {
             GUM,
 			WALL,
 			SQUARE_SIZE,
+			PACMAN,
 			nbGhost: 4,
 			ghosts: [
 				{
@@ -170,28 +173,38 @@ export default {
 			}
 			randomGrid = this.addWallsSurrounding(randomGrid);
 			randomGrid = this.addTeleportingSpace(randomGrid);
+			randomGrid[1][1] = this.PACMAN;
 			return randomGrid;
 		},
 	}
 }
 </script>
 
-<style>
-#app {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
-	color: #2c3e50;
+<style scoped>
+.game-background {
+	background-image: url('../../public/assets/images/game_menu.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+}
+
+.container {
+	width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .ui-box {
 	display: flex;
     flex-direction: column;
     gap: 12px;
-	margin-top: 12px;
 	border: solid 2px black;
     padding: 12px;
+	background: yellow;
+	border-radius: 8px;
+	width: 35%;
+	justify-content: center;
 }
 
 .row-box {
